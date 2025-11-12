@@ -57,6 +57,24 @@ async function run() {
       res.send(result);
     });
 
+
+    app.patch("/artworks/:id/likes", async (req, res) => {
+      const { id } = req.params;
+
+      try {
+        const result = await artworkCollection.updateOne(
+          { _id: new ObjectId(id) },
+          { $inc: { likes: 1 } } // ✅ Increase by 1
+        );
+
+        res.json({ success: true, message: "Like added!" });
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, error: "Failed to like artwork" });
+      }
+    });
+
+
   } finally {
     // Ensures that the client will close when you finish/error
     //await client.close();
