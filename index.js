@@ -1,6 +1,6 @@
 const express = require('express')
 const cors = require('cors');
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
 const port = process.env.PORT || 3000
 //w9DJilBhllnhcWcR
@@ -28,10 +28,19 @@ async function run() {
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
+
+
     const db=client.db('artwork-db')
     const artworkCollection=db.collection('artworks')
+
+
     app.get('/artworks',async(req,res)=>{
       const result=await artworkCollection.find().sort({ createdAt: -1 }).limit(6).toArray();
+      res.send(result)
+    })
+    app.get('/artworks/:id',async(req,res)=>{
+      const {id}=req.params
+      const result=await artworkCollection.findOne({_id: new ObjectId(id)})
       res.send(result)
     })
   } finally {
