@@ -30,19 +30,26 @@ async function run() {
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
 
 
-    const db=client.db('artwork-db')
-    const artworkCollection=db.collection('artworks')
+    const db = client.db('artwork-db')
+    const artworkCollection = db.collection('artworks')
 
 
-    app.get('/artworks',async(req,res)=>{
-      const result=await artworkCollection.find().sort({ createdAt: -1 }).limit(6).toArray();
+    app.get('/artworks', async (req, res) => {
+      const result = await artworkCollection.find().sort({ createdAt: -1 }).limit(6).toArray();
       res.send(result)
     })
-    app.get('/artworks/:id',async(req,res)=>{
-      const {id}=req.params
-      const result=await artworkCollection.findOne({_id: new ObjectId(id)})
+    app.get('/artworks/:id', async (req, res) => {
+      const { id } = req.params
+      const result = await artworkCollection.findOne({ _id: new ObjectId(id) })
       res.send(result)
     })
+
+    app.post("/artworks", async (req, res) => {
+      const artwork = req.body;
+      const result = await artworkCollection.insertOne(artwork);
+      res.send(result);
+    });
+
   } finally {
     // Ensures that the client will close when you finish/error
     //await client.close();
