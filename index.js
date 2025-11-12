@@ -75,6 +75,43 @@ async function run() {
     });
 
 
+    // ✅ Get artworks by user email
+    // POST /my-artworks
+    app.post("/my-artworks", async (req, res) => {
+      try {
+        const { email } = req.body; // get email from request body
+        if (!email) return res.status(400).json({ error: "Email is required" });
+
+        const result = await artworkCollection.find({ user_email: email }).toArray();
+        res.json(result);
+      } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: "Failed to fetch artworks" });
+      }
+    });
+
+
+
+    // ✅ Delete an artwork
+    app.delete("/my-artworks/:id", async (req, res) => {
+      const { id } = req.params;
+      const result = await artworkCollection.deleteOne({ _id: new ObjectId(id) });
+      res.json({ success: result.deletedCount > 0 });
+    });
+
+    // ✅ Update an artwork
+    app.patch("/my-artworks/:id", async (req, res) => {
+      const { id } = req.params;
+      const updated = req.body;
+      const result = await artworkCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $set: updated }
+      );
+      res.json({ success: result.modifiedCount > 0 });
+    });
+
+
+
   } finally {
     // Ensures that the client will close when you finish/error
     //await client.close();
