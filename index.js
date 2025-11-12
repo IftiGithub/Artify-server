@@ -38,6 +38,13 @@ async function run() {
       const result = await artworkCollection.find().sort({ createdAt: -1 }).limit(6).toArray();
       res.send(result)
     })
+
+    app.get('/allartworks', async (req, res) => {
+      const result = await artworkCollection.find().sort({ createdAt: -1 }).toArray();
+      res.send(result)
+    })
+
+
     app.get('/artworks/:id', async (req, res) => {
       const { id } = req.params
       const result = await artworkCollection.findOne({ _id: new ObjectId(id) })
